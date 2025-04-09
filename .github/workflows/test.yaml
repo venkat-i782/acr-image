@@ -47,9 +47,9 @@ jobs:
       # Step 7: Build the Docker image (use the correct Dockerfile location)
       - name: Build the Docker image
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/my-python-app:latest .
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/nginx-test-site:latest .
 
       # Step 8: Push Docker image to ACR
       - name: Push Docker image to ACR
         run: |
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/my-python-app:latest
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/nginx-test-site:latest
