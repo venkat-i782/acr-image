@@ -1,0 +1,55 @@
+name: Build and Push Docker Image to ACR
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Check Azure CLI version
+      - name: Check Azure CLI version
+        run: az --version
+
+      # Step 3: Login via Azure CLI using the credentials stored in the secret
+      - name: Login via Azure CLI
+        uses: azure/login@v1.4.6
+        with:
+          creds: ${{ secrets.azure_credentials }}  # Use the azure_credentials secret for login
+
+      # Step 4: Log in to Azure Container Registry (ACR)
+      - name: Log in to ACR
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}  # Your ACR login server URL
+          username: ${{ secrets.ACR_USERNAME }}  # Your ACR username
+          password: ${{ secrets.ACR_PASSWORD }}  # Your ACR password (client secret or similar)
+
+      # Step 5: Check the files in the current directory (helpful for debugging)
+      - name: List files in the working directory
+        run: ls -alh
+
+      # Step 6: Ensure Dockerfile is present in the root directory
+      - name: Ensure Dockerfile location
+        run: |
+          if [ ! -f "Dockerfile" ]; then
+            echo "Dockerfile not found in the root directory!";
+            exit 1;
+          fi
+
+      # Step 7: Build the Docker image (use the correct Dockerfile location)
+      - name: Build the Docker image
+        run: |
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/my-python-app:latest .
+
+      # Step 8: Push Docker image to ACR
+      - name: Push Docker image to ACR
+        run: |
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/my-python-app:latest
