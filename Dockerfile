@@ -1,15 +1,11 @@
-# Use the official NGINX image from Docker Hub
+# Use official NGINX image from the Docker Hub
 FROM nginx:latest
 
-# Copy custom NGINX configuration file (optional)
-# COPY nginx.conf /etc/nginx/nginx.conf
+# Remove the default nginx index page
+RUN rm /usr/share/nginx/html/*
 
-# Copy your website files (e.g., HTML, CSS, JS) to the NGINX server
-# Assuming your website files are in the `./html` folder in your project
-COPY ./index.html /usr/share/nginx/html
+# Copy the custom HTML file into the container
+COPY ./index.html /usr/share/nginx/html/
 
 # Expose port 80 to the outside world
 EXPOSE 80
-
-# Start the NGINX server
-CMD ["nginx", "-g", "daemon off;"]
